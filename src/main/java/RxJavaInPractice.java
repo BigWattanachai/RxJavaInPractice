@@ -1,6 +1,7 @@
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,11 @@ import java.util.List;
  */
 public class RxJavaInPractice {
   public static void main(String[] args) {
+    observableJust();
+    publishSubject();
+  }
+
+  private static void observableJust() {
     List<String> list = Arrays.asList("Android", "Ubuntu", "Mac os");
     Observable<List<String>> listObservable = Observable.just(list);
     listObservable.subscribe(new Observer<List<String>>() {
@@ -33,5 +39,14 @@ public class RxJavaInPractice {
 
       }
     });
+  }
+
+  private static void publishSubject() {
+    PublishSubject<Integer> subject = PublishSubject.create();
+    subject.onNext(1);
+    subject.subscribe(System.out::println);
+    subject.onNext(2);
+    subject.onNext(3);
+    subject.onNext(4);
   }
 }

@@ -2,6 +2,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.ReplaySubject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +14,16 @@ public class RxJavaInPractice {
   public static void main(String[] args) {
     observableJust();
     publishSubject();
+    replaySubject();
+  }
+
+  private static void replaySubject() {
+    ReplaySubject<Integer> s = ReplaySubject.create();
+    s.subscribe(v -> System.out.println("Early:" + v));
+    s.onNext(0);
+    s.onNext(1);
+    s.subscribe(v -> System.out.println("Late: " + v));
+    s.onNext(2);
   }
 
   private static void observableJust() {

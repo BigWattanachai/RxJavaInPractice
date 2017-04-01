@@ -1,10 +1,7 @@
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.AsyncSubject;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +16,30 @@ public class RxJavaInPractice {
     replaySubject();
     behaviorSubject();
     asyncSubject();
+    handleTheError();
+    unsubscribe();
+  }
+
+  private static void unsubscribe() {
+    Subject<Integer> values = ReplaySubject.create();
+    Disposable subscription = values.subscribe(
+      System.out::println,
+      System.err::println,
+      () -> System.out.println("Done")
+    );
+    values.onNext(0);
+    values.onNext(1);
+    subscription.dispose();
+    values.onNext(2);
+  }
+
+  private static void handleTheError() {
+    Subject<Integer> s = ReplaySubject.create();
+    s.subscribe(
+      System.out::println,
+      System.err::println);
+    s.onNext(0);
+    s.onError(new Exception("Oops"));
   }
 
   private static void asyncSubject() {

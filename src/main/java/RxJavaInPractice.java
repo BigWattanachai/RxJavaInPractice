@@ -18,6 +18,69 @@ public class RxJavaInPractice {
     asyncSubject();
     handleTheError();
     unsubscribe();
+    unsubscribe2();
+    onCompleted();
+    observableNever();
+    observableError();
+    observableCreate();
+  }
+
+  private static void observableCreate() {
+    Observable<String> values = Observable.create(o -> {
+      o.onNext("Hello");
+      o.onComplete();
+    });
+    values.subscribe(
+      v -> System.out.println("Received: " + v),
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void observableError() {
+    Observable<String> values = Observable.error(new Exception("Oops"));
+    values.subscribe(
+      v -> System.out.println("Received: " + v),
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void observableNever() {
+    Observable<String> values = Observable.never();
+    values.subscribe(
+      v -> System.out.println("Received: " + v),
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void onCompleted() {
+    Subject<Integer> values = ReplaySubject.create();
+    values.subscribe(
+      v -> System.out.println("First: " + v),
+      e -> System.out.println("First: " + e),
+      () -> System.out.println("Completed")
+    );
+    values.onNext(0);
+    values.onNext(1);
+    values.onComplete();
+    values.onNext(2);
+  }
+
+  private static void unsubscribe2() {
+    Subject<Integer> values = ReplaySubject.create();
+    Disposable subscription1 = values.subscribe(
+      v -> System.out.println("First: " + v)
+    );
+    values.subscribe(
+      v -> System.out.println("Second: " + v)
+    );
+    values.onNext(0);
+    values.onNext(1);
+    subscription1.dispose();
+    System.out.println("Unsubscribed first");
+    values.onNext(2);
   }
 
   private static void unsubscribe() {

@@ -1,6 +1,8 @@
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.AsyncSubject;
+import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.ReplaySubject;
 
@@ -15,6 +17,26 @@ public class RxJavaInPractice {
     observableJust();
     publishSubject();
     replaySubject();
+    behaviorSubject();
+    asyncSubject();
+  }
+
+  private static void asyncSubject() {
+    AsyncSubject<Integer> s = AsyncSubject.create();
+    s.subscribe(System.out::println);
+    s.onNext(0);
+    s.onNext(1);
+    s.onNext(2);
+    s.onComplete();
+  }
+
+  private static void behaviorSubject() {
+    BehaviorSubject<Integer> s = BehaviorSubject.create();
+    s.onNext(0);
+    s.onNext(1);
+    s.onNext(2);
+    s.subscribe(v -> System.out.println("Late: " + v));
+    s.onNext(3);
   }
 
   private static void replaySubject() {

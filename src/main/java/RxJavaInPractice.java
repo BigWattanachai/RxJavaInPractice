@@ -5,6 +5,8 @@ import io.reactivex.subjects.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * Created by BiG on 4/1/2017 AD.
@@ -23,6 +25,103 @@ public class RxJavaInPractice {
     observableNever();
     observableError();
     observableCreate();
+    operatorFilter();
+    ignoreElements();
+    operatorTake();
+    operatorSkip();
+    operatorTakeWhile();
+    operatorSkipWhile();
+    operatorSkipLast();
+    operatorTakeLast();
+
+  }
+
+  private static void operatorTakeLast() {
+    Observable<Integer> values = Observable.range(0, 5);
+    values.takeLast(2).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void operatorSkipLast() {
+    Observable<Integer> values = Observable.range(0, 5);
+    values.skipLast(2).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void operatorSkipWhile() {
+    Observable<Long> values = Observable.interval(100, TimeUnit.MILLISECONDS);
+    values
+      .skipWhile(v -> v < 2)
+      .subscribe(
+        System.out::println,
+        e -> System.out.println("Error: " + e),
+        () -> System.out.println("Completed")
+      );
+  }
+
+  private static void operatorTakeWhile() {
+    Observable<Long> values = Observable.interval(100, TimeUnit.MILLISECONDS);
+    values.takeWhile(v -> v < 2).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void operatorSkip() {
+    Observable<Integer> values = Observable.range(0, 5);
+    values.skip(2).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void operatorTake() {
+    Observable<Integer> values = Observable.range(0, 5);
+    values.take(2).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+
+
+/*    Observable<Integer> valuesWithError = Observable.create(o -> {
+      o.onNext(1);
+      o.onError(new Exception("Oops"));
+    });
+
+    valuesWithError.take(1).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );*/
+  }
+
+  //ignoreElements() produces the same result as filter(v -> false)
+  private static void ignoreElements() {
+    Observable<Integer> values = Observable.range(0, 10);
+    values.ignoreElements().subscribe(
+      () -> System.out.println("Completed"),
+      e -> System.out.println("Error: " + e)
+    );
+  }
+
+  private static void operatorFilter() {
+    Observable<Integer> values = Observable.range(0, 10);
+    values
+      .filter(v -> v % 2 == 0)
+      .subscribe(
+        System.out::println,
+        e -> System.out.println("Error: " + e),
+        () -> System.out.println("Completed")
+      );
   }
 
   private static void observableCreate() {

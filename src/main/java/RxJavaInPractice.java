@@ -33,7 +33,70 @@ public class RxJavaInPractice {
     operatorSkipWhile();
     operatorSkipLast();
     operatorTakeLast();
+    operatorTakeUntil();
+    operatorSkipUntil();
+    operatorDistinct();
+    operatorMap();
+    castAndOfType();
+  }
 
+  private static void castAndOfType() {
+    Observable<Object> values = Observable.just(0, 1, 2, 3);
+    values
+      .cast(Integer.class)
+      .subscribe(new PrintSubscriber("Map"));
+
+
+    //This will filter our items that cannot be cast and then cast the sequence to the desired type.
+    Observable<Object> valuesOfType = Observable.just(0, 1, "2", 3);
+    valuesOfType
+      .ofType(Integer.class)
+      .subscribe(new PrintSubscriber("Map"));
+  }
+
+  private static void operatorMap() {
+    Observable<Integer> values = Observable.range(0, 4);
+    values
+      .map(i -> i + 3)
+      .subscribe(new PrintSubscriber("Map"));
+  }
+
+  //distinct filters out any element that has already appeared in the sequence.
+  private static void operatorDistinct() {
+    Observable<Integer> values = Observable.create(o -> {
+      o.onNext(1);
+      o.onNext(1);
+      o.onNext(2);
+      o.onNext(3);
+      o.onNext(2);
+      o.onComplete();
+    });
+    values.distinct().subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  private static void operatorSkipUntil() {
+    Observable<Long> values = Observable.interval(100, TimeUnit.MILLISECONDS);
+    Observable<Long> cutoff = Observable.timer(250, TimeUnit.MILLISECONDS);
+    values.skipUntil(cutoff).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
+  }
+
+  //takeUntil works exactly like takeWhile except that it takes items while the predicate is false
+  private static void operatorTakeUntil() {
+    Observable<Long> values = Observable.interval(100, TimeUnit.MILLISECONDS);
+    Observable<Long> cutoff = Observable.timer(250, TimeUnit.MILLISECONDS);
+    values.takeUntil(cutoff).subscribe(
+      System.out::println,
+      e -> System.out.println("Error: " + e),
+      () -> System.out.println("Completed")
+    );
   }
 
   private static void operatorTakeLast() {
@@ -264,5 +327,33 @@ public class RxJavaInPractice {
     subject.onNext(2);
     subject.onNext(3);
     subject.onNext(4);
+  }
+
+  private static class PrintSubscriber implements Observer<Integer> {
+    String message;
+
+    public PrintSubscriber(String message) {
+      this.message = message;
+    }
+
+    @Override
+    public void onSubscribe(Disposable d) {
+
+    }
+
+    @Override
+    public void onNext(Integer integer) {
+      System.out.println(message + " : " + integer);
+    }
+
+    @Override
+    public void onError(Throwable e) {
+      System.out.println(message + " : " + e.getMessage());
+    }
+
+    @Override
+    public void onComplete() {
+      System.out.println(message + " : Completed");
+    }
   }
 }
